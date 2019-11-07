@@ -1,15 +1,18 @@
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('txt',help='*.txt',type=str)
-args = parser.parse_args()
+from os.path import join
+from glob import glob
 
-with open(args.txt,'r') as f:
+
+def create_txt(text):
+    f1 = open(text,'r')
     new_txt = []
     count = 0
-    for line in f:
+    for line in f1:
         if line == '-1,-1\n':
-            f2 = open('{}{}.txt'.format(args.txt[:-4],count),'w')
+            name = text.lstrip(args.input).rstrip('.txt')
+            text_path = '{}/{}{}.txt'.format(args.output,name,count)
+            f2 = open(text_path,'w')
             for line2 in new_txt:
                 f2.write(line2)
             f2.close()
@@ -18,5 +21,18 @@ with open(args.txt,'r') as f:
 
         else:
             new_txt.append(line)
-    
+    f1.close()
+
+def main():
+    texts = glob(join(args.input,'*.txt'))
+    for text in texts:
+        create_txt(text)
+
         
+if __name__=='__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input',type=str,default='log')
+    parser.add_argument('--output',type=str,default='logs')
+    args = parser.parse_args()
+
+    main()
